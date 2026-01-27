@@ -1,44 +1,71 @@
+using AuthService.API.Middlewares;
+using AuthService.Application.Auth;
+using AuthService.Core.Interfaces;
+using AuthService.Infrastructure.Persistence;
+using AuthService.Infrastructure.Security;
+using MediatR;
+using Microsoft.EntityFrameworkCore;
+using Serilog;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+// Serilog
+Log.Logger = new LoggerConfiguration()
+    .ReadFrom.Configuration(builder.Configuration)
+    .WriteTo.Console()
+    .CreateLogger();
+
+builder.Host.UseSerilog();
+
+// Controllers
+builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-var app = builder.Build();
+// DbContext
+builder.Services.AddDbContext<AuthDbContext>(opt =>
+    opt.UseNpgsql(builder.Configuration.GetConnectionString("AuthDb")));
 
-// Configure the HTTP request pipeline.
+// Repos
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+
+// Jwt options + service
+builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection("Jwt"));
+builder.Services.AddScoped<IJwtTokenService, JwtTokenService>();
+
+// MediatR
+builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(RegisterCommand).Assembly));
+
+// Middleware
+builder.Services.AddScoped<GlobalExceptionMiddleware>();
+
+// Hash/JWT funcs (Onion bağımlılığını “ince” tutmak için)
+builder.Services.AddScoped<Func<string, (byte[] hash, byte[] salt)>>(_ => PasswordHasher.Hash);
+builder.Services.AddScoped<Func<string, byte[], byte[], bool>>(_ => PasswordHasher.Verify);
+builder.Services.AddScoped<Func<AuthService.Core.Entities.User, string>>(sp =>
+{
+    var jwt = sp.GetRequiredService<IJwtTokenService>();
+    return user => jwt.CreateToken(user);
+});
+
+var app = builder.Build();
+app.Lifetime.ApplicationStarted.Register(() =>
+{
+    var firstUrl = app.Urls.FirstOrDefault() ?? "http://localhost";
+    app.Logger.LogInformation("✅ AuthService started. Swagger: {SwaggerUrl}", $"{firstUrl}/swagger");
+});
+
+
+
+
+app.UseSerilogRequestLogging();
+app.UseMiddleware<GlobalExceptionMiddleware>();
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
-app.UseHttpsRedirection();
-
-var summaries = new[]
-{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
-
-app.MapGet("/weatherforecast", () =>
-{
-    var forecast =  Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
-})
-.WithName("GetWeatherForecast")
-.WithOpenApi();
-
+app.UseAuthorization();
+app.MapControllers();
 app.Run();
-
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}
