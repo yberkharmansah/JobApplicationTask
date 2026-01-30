@@ -10,7 +10,13 @@ public sealed record UpdateProductCommand(Guid Id, string Name, string Descripti
 public sealed class UpdateProductCommandHandler : IRequestHandler<UpdateProductCommand, ProductDto>
 {
     private readonly IProductRepository _repo;
-    public UpdateProductCommandHandler(IProductRepository repo) => _repo = repo;
+    private readonly IProductCache _cache;
+
+    public UpdateProductCommandHandler(IProductRepository repo, IProductCache cache)
+    {
+        _repo = repo;
+        _cache = cache;
+    }
 
     public async Task<ProductDto> Handle(UpdateProductCommand request, CancellationToken ct)
     {
@@ -25,6 +31,8 @@ public sealed class UpdateProductCommandHandler : IRequestHandler<UpdateProductC
         p.UpdatedAtUtc = DateTime.UtcNow;
 
         await _repo.UpdateAsync(p, ct);
+        await _cache.SetByIdAsync(p, ct);
+        await _cache.InvalidateListAsync(ct);
         return new ProductDto(p.Id, p.Name, p.Description, p.Price, p.Category, p.ImageUrl);
     }
 }

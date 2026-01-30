@@ -6,8 +6,10 @@ using Microsoft.IdentityModel.Tokens;
 using ProductService.API.Middlewares;
 using ProductService.Application.Products;
 using ProductService.Core.Interfaces;
+using ProductService.Infrastructure.Caching;
 using ProductService.Infrastructure.Persistence;
 using Serilog;
+using StackExchange.Redis;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -30,10 +32,16 @@ builder.Services.AddDbContext<ProductDbContext>(opt =>
 
 // Repo
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
+builder.Services.AddScoped<IProductCache, ProductCache>();
 
 // MediatR (handlers ProductService.Application assembly'sinde)
 builder.Services.AddMediatR(cfg =>
     cfg.RegisterServicesFromAssembly(typeof(ProductDto).Assembly));
+
+// Redis
+var redisConnection = builder.Configuration.GetValue<string>("Redis:ConnectionString") ?? "localhost:6379";
+builder.Services.AddStackExchangeRedisCache(options => options.Configuration = redisConnection);
+builder.Services.AddSingleton<IConnectionMultiplexer>(_ => ConnectionMultiplexer.Connect(redisConnection));
 
 // JWT AuthN/AuthZ
 var jwtSection = builder.Configuration.GetSection("Jwt");
@@ -60,27 +68,3 @@ builder.Services.AddAuthorization();
 
 // Global exception middleware
 builder.Services.AddScoped<GlobalExceptionMiddleware>();
-
-var app = builder.Build();
-
-// Startup log (tek satır)
-app.Lifetime.ApplicationStarted.Register(() =>
-{
-    var firstUrl = app.Urls.FirstOrDefault() ?? "http://localhost";
-    app.Logger.LogInformation("✅ ProductService started. Swagger: {SwaggerUrl}", $"{firstUrl}/swagger");
-});
-
-app.UseSerilogRequestLogging();
-app.UseMiddleware<GlobalExceptionMiddleware>();
-
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
-
-app.UseAuthentication();
-app.UseAuthorization();
-
-app.MapControllers();
-app.Run();

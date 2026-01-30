@@ -11,7 +11,13 @@ public sealed record CreateProductCommand(string Name, string Description, decim
 public sealed class CreateProductCommandHandler : IRequestHandler<CreateProductCommand, ProductDto>
 {
     private readonly IProductRepository _repo;
-    public CreateProductCommandHandler(IProductRepository repo) => _repo = repo;
+    private readonly IProductCache _cache;
+
+    public CreateProductCommandHandler(IProductRepository repo, IProductCache cache)
+    {
+        _repo = repo;
+        _cache = cache;
+    }
 
     public async Task<ProductDto> Handle(CreateProductCommand request, CancellationToken ct)
     {
@@ -30,6 +36,8 @@ public sealed class CreateProductCommandHandler : IRequestHandler<CreateProductC
         };
 
         await _repo.AddAsync(p, ct);
+        await _cache.SetByIdAsync(p, ct);
+        await _cache.InvalidateListAsync(ct);
         return new ProductDto(p.Id, p.Name, p.Description, p.Price, p.Category, p.ImageUrl);
     }
 }
