@@ -68,3 +68,40 @@ builder.Services.AddAuthorization();
 
 // Global exception middleware
 builder.Services.AddScoped<GlobalExceptionMiddleware>();
+
+var app = builder.Build();
+
+// Startup log (tek satır)
+app.Lifetime.ApplicationStarted.Register(() =>
+{
+    var firstUrl = app.Urls.FirstOrDefault() ?? "http://localhost";
+    app.Logger.LogInformation("✅ ProductService started. Swagger: {SwaggerUrl}", $"{firstUrl}/swagger");
+});
+
+app.UseSerilogRequestLogging();
+app.UseMiddleware<GlobalExceptionMiddleware>();
+
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
+
+app.UseAuthentication();
+app.UseAuthorization();
+
+app.MapControllers();
+
+try
+{
+    app.Run();
+}
+catch (Exception ex)
+{
+    Log.Fatal(ex, "❌ ProductService failed to start.");
+    throw;
+}
+finally
+{
+    Log.CloseAndFlush();
+}
