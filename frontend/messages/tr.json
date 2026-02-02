@@ -1,0 +1,60 @@
+{
+  "nav": {
+    "home": "Ana Sayfa",
+    "products": "Ürünler",
+    "cart": "Sepet",
+    "login": "Giriş",
+    "register": "Kayıt Ol"
+  },
+  "hero": {
+    "title": "Modern ekipler için akıllı alışveriş",
+    "subtitle": "Performans, kalite ve konfor için seçilmiş ürünleri keşfedin. Sepetinizi oluşturun ve hızlıca satın alın.",
+    "ctaPrimary": "Ürünleri keşfet",
+    "ctaSecondary": "Detayları gör"
+  },
+  "products": {
+    "title": "Öne çıkan ürünler",
+    "filters": "Filtreler",
+    "category": "Kategori",
+    "priceRange": "Fiyat aralığı",
+    "sortBy": "Sıralama",
+    "sortNewest": "En yeni",
+    "sortPriceAsc": "Fiyat ↑",
+    "sortPriceDesc": "Fiyat ↓",
+    "apply": "Uygula",
+    "reset": "Sıfırla",
+    "empty": "Seçilen filtrelerde ürün bulunamadı."
+  },
+  "product": {
+    "addToCart": "Sepete ekle",
+    "details": "Ürün detayları",
+    "categoryLabel": "Kategori",
+    "priceLabel": "Fiyat",
+    "backToProducts": "Ürünlere dön"
+  },
+  "cart": {
+    "title": "Sepetin",
+    "empty": "Sepetin boş.",
+    "summary": "Özet",
+    "subtotal": "Ara toplam",
+    "items": "ürün",
+    "remove": "Kaldır",
+    "checkout": "Ödemeye ilerle"
+  },
+  "auth": {
+    "title": "Tekrar hoş geldiniz",
+    "subtitle": "Güvenli şekilde giriş yaparak ürünleri yönetin.",
+    "registerTitle": "Hesabını oluştur",
+    "email": "E-posta adresi",
+    "password": "Şifre",
+    "loginButton": "Giriş yap",
+    "registerButton": "Kayıt ol",
+    "switchToRegister": "Hesabın yok mu? Kayıt ol",
+    "switchToLogin": "Zaten hesabın var mı? Giriş yap",
+    "success": "Başarılı! Oturum hazır."
+  },
+  "footer": {
+    "headline": "Kataloğunu büyütmeye hazır mısın?",
+    "cta": "Hemen satışa başla"
+  }
+}
