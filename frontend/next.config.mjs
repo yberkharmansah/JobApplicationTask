@@ -8,7 +8,17 @@ const nextConfig = {
       { protocol: "https", hostname: "images.unsplash.com" },
       { protocol: "https", hostname: "cdn.pixabay.com" },
       { protocol: "https", hostname: "via.placeholder.com" },
-      { protocol: "http", hostname: "localhost" }
+      { protocol: "http", hostname: "localhost" },
+      {
+        protocol: "https",
+        hostname: "cdnuploads.aa.com.tr",
+        pathname: "/uploads/**",
+      },
+      {
+        protocol: "https",
+        hostname: "placehold.co",
+        pathname: "/**",
+      }
     ]
   }
 };

@@ -22,6 +22,10 @@ export default async function ProductDetailPage({ params }: Props) {
   const { id } = params;
   const t = await getTranslations();
   const product = await fetchProduct(id);
+  const imageSrc =
+    product.imageUrl || "https://via.placeholder.com/800x600.png";
+  const isInlineImage =
+    imageSrc.startsWith("data:") || imageSrc.startsWith("blob:");
 
   return (
     <div className="mx-auto flex w-full max-w-6xl flex-col gap-10 px-6 py-12">
@@ -34,10 +38,11 @@ export default async function ProductDetailPage({ params }: Props) {
       <div className="grid gap-10 lg:grid-cols-[1.1fr_0.9fr]">
         <div className="relative h-96 overflow-hidden rounded-3xl border border-white/10 bg-white/5">
           <Image
-            src={product.imageUrl || "https://via.placeholder.com/800x600.png"}
+            src={imageSrc}
             alt={product.name}
             fill
             className="object-cover"
+            unoptimized={isInlineImage}
           />
         </div>
         <div className="flex flex-col gap-6">

@@ -13,15 +13,20 @@ type Props = {
 
 export default function ProductCard({ product, addLabel }: Props) {
   const dispatch = useAppDispatch();
+  const imageSrc =
+    product.imageUrl || "https://via.placeholder.com/640x480.png";
+  const isInlineImage =
+    imageSrc.startsWith("data:") || imageSrc.startsWith("blob:");
 
   return (
     <div className="flex h-full flex-col overflow-hidden rounded-3xl border border-white/10 bg-white/5">
       <Link href={`/products/${product.id}`} className="relative block h-48">
         <Image
-          src={product.imageUrl || "https://via.placeholder.com/640x480.png"}
+          src={imageSrc}
           alt={product.name}
           fill
           className="object-cover"
+          unoptimized={isInlineImage}
         />
       </Link>
       <div className="flex flex-1 flex-col gap-3 p-5">

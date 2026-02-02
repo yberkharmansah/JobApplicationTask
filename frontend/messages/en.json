@@ -6,6 +6,7 @@
     "login": "Login",
     "register": "Register",
     "signedInAs": "Signed in as",
+    "admin": "Manage products",
     "logout": "Logout"
   },
   "hero": {
@@ -58,5 +59,33 @@
   "footer": {
     "headline": "Ready to elevate your catalog?",
     "cta": "Start selling today"
+  },
+  "admin": {
+    "title": "Product management",
+    "subtitle": "Create, update, and remove products using authenticated requests.",
+    "createTitle": "Add a new product",
+    "editTitle": "Edit product",
+    "name": "Product name",
+    "description": "Description",
+    "price": "Price",
+    "category": "Category",
+    "imageUrl": "Image URL",
+    "preview": "Preview",
+    "previewAlt": "Selected product image",
+    "createButton": "Create product",
+    "updateButton": "Update product",
+    "editButton": "Edit",
+    "deleteButton": "Delete",
+    "cancel": "Cancel",
+    "listTitle": "Existing products",
+    "empty": "No products available yet.",
+    "authRequired": "Please sign in to manage products.",
+    "imageUrlRequired": "Please provide an image URL before saving.",
+    "createSuccess": "Product created successfully.",
+    "updateSuccess": "Product updated successfully.",
+    "deleteSuccess": "Product deleted successfully.",
+    "saveError": "Unable to save the product.",
+    "deleteError": "Unable to delete the product.",
+    "loadError": "Unable to load products."
   }
 }

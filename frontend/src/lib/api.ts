@@ -10,6 +10,7 @@ export async function fetchProducts(params: {
   min?: string;
   max?: string;
   sort?: string;
+  revalidate?: number;
 }) {
   const search = new URLSearchParams();
   if (params.category) search.set("category", params.category);
@@ -19,7 +20,30 @@ export async function fetchProducts(params: {
 
   const response = await fetch(
     `${productBaseUrl}/products?${search.toString()}`,
-    { next: { revalidate: 60 } }
+    { next: { revalidate: params.revalidate ?? 60 } }
+  );
+
+  if (!response.ok) {
+    throw new Error("Failed to load products");
+  }
+
+  return (await response.json()) as Product[];
+}
+
+export async function fetchProductsClient(params: {
+  category?: string;
+  min?: string;
+  max?: string;
+  sort?: string;
+}) {
+  const search = new URLSearchParams();
+  if (params.category) search.set("category", params.category);
+  if (params.min) search.set("min", params.min);
+  if (params.max) search.set("max", params.max);
+  if (params.sort) search.set("sort", params.sort);
+
+  const response = await fetch(
+    `${productBaseUrl}/products?${search.toString()}`
   );
 
   if (!response.ok) {
@@ -67,4 +91,58 @@ export async function register(payload: { email: string; password: string }) {
   }
 
   return response.json() as Promise<{ token: string; email: string }>;
+}
+
+export async function createProduct(
+  payload: Omit<Product, "id">,
+  token: string
+) {
+  const response = await fetch(`${productBaseUrl}/products`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`
+    },
+    body: JSON.stringify(payload)
+  });
+
+  if (!response.ok) {
+    throw new Error("Create product failed");
+  }
+
+  return response.json() as Promise<Product>;
+}
+
+export async function updateProduct(
+  id: string,
+  payload: Omit<Product, "id">,
+  token: string
+) {
+  const response = await fetch(`${productBaseUrl}/products/${id}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`
+    },
+    body: JSON.stringify(payload)
+  });
+
+  if (!response.ok) {
+    throw new Error("Update product failed");
+  }
+
+  return response.json() as Promise<Product>;
+}
+
+export async function deleteProduct(id: string, token: string) {
+  const response = await fetch(`${productBaseUrl}/products/${id}`, {
+    method: "DELETE",
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  });
+
+  if (!response.ok) {
+    throw new Error("Delete product failed");
+  }
 }

@@ -36,7 +36,7 @@ export default function UserMenu() {
 
   if (!email) {
     return (
-      <>
+     <>
         <Link
           href="/auth/login"
           className="rounded-full border border-white/20 px-4 py-2 text-slate-200 transition hover:border-white hover:text-white"
@@ -61,6 +61,12 @@ export default function UserMenu() {
         </span>
         <span className="font-semibold text-white">{email}</span>
       </div>
+      <Link
+        href="/admin/products"
+        className="rounded-full border border-white/20 px-3 py-1 text-xs font-semibold text-slate-200 transition hover:border-white hover:text-white"
+      >
+        {t("admin")}
+      </Link>
       <button
         onClick={logout}
         className="rounded-full border border-white/20 px-3 py-1 text-xs font-semibold text-slate-200 transition hover:border-white hover:text-white"

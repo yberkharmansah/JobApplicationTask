@@ -1,46 +1,75 @@
 "use client";
 
-import { useRouter, useSearchParams } from "next/navigation";
-import { useState } from "react";
+import { useSearchParams } from "next/navigation";
+import { useCallback, useMemo, useState } from "react";
+import { useRouter } from "@/i18n/navigation";
+
+type Labels = {
+  filters: string;
+  category: string;
+  priceRange: string;
+  sortBy: string;
+  sortNewest: string;
+  sortPriceAsc: string;
+  sortPriceDesc: string;
+  apply: string;
+  reset: string;
+};
 
 type Props = {
-  labels: {
-    filters: string;
-    category: string;
-    priceRange: string;
-    sortBy: string;
-    sortNewest: string;
-    sortPriceAsc: string;
-    sortPriceDesc: string;
-    apply: string;
-    reset: string;
-  };
+  labels: Labels;
+};
+
+type FilterState = {
+  category: string;
+  min: string;
+  max: string;
+  sort: string;
 };
 
 export default function ProductFilters({ labels }: Props) {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [category, setCategory] = useState(searchParams.get("category") ?? "");
-  const [min, setMin] = useState(searchParams.get("min") ?? "");
-  const [max, setMax] = useState(searchParams.get("max") ?? "");
-  const [sort, setSort] = useState(searchParams.get("sort") ?? "");
+  const initialState = useMemo<FilterState>(
+    () => ({
+      category: searchParams.get("category") ?? "",
+      min: searchParams.get("min") ?? "",
+      max: searchParams.get("max") ?? "",
+      sort: searchParams.get("sort") ?? ""
+    }),
+    [searchParams]
+  );
+  const [filters, setFilters] = useState<FilterState>(initialState);
 
-  const apply = () => {
+  const updateFilter = useCallback(
+    (key: keyof FilterState, value: string) => {
+      setFilters((prev) => ({ ...prev, [key]: value }));
+    },
+    []
+  );
+
+  const buildParams = useCallback((current: FilterState) => {
     const params = new URLSearchParams();
-    if (category) params.set("category", category);
-    if (min) params.set("min", min);
-    if (max) params.set("max", max);
-    if (sort) params.set("sort", sort);
-    router.push(`/products?${params.toString()}`);
-  };
+    if (current.category) params.set("category", current.category);
+    if (current.min) params.set("min", current.min);
+    if (current.max) params.set("max", current.max);
+    if (current.sort) params.set("sort", current.sort);
+    return params;
+  }, []);
 
-  const reset = () => {
-    setCategory("");
-    setMin("");
-    setMax("");
-    setSort("");
+  const apply = useCallback(() => {
+    const params = buildParams(filters);
+    const query = params.toString();
+    router.push(query ? `/products?${query}` : "/products");
+    router.refresh();
+  }, [buildParams, filters, router]);
+
+  const reset = useCallback(() => {
+    const emptyState = { category: "", min: "", max: "", sort: "" };
+    setFilters(emptyState);
     router.push("/products");
-  };
+    router.refresh();
+  }, [router]);
 
   return (
     <div className="flex flex-col gap-4 rounded-3xl border border-white/10 bg-white/5 p-6">
@@ -56,8 +85,8 @@ export default function ProductFilters({ labels }: Props) {
       <label className="text-sm text-slate-300">
         {labels.category}
         <input
-          value={category}
-          onChange={(event) => setCategory(event.target.value)}
+          value={filters.category}
+          onChange={(event) => updateFilter("category", event.target.value)}
           placeholder="Sneaker / Tech / Home"
           className="mt-2 w-full rounded-xl border border-white/10 bg-slate-950 px-4 py-2 text-sm text-white placeholder:text-slate-500"
         />
@@ -66,8 +95,8 @@ export default function ProductFilters({ labels }: Props) {
         <label className="text-sm text-slate-300">
           {labels.priceRange}
           <input
-            value={min}
-            onChange={(event) => setMin(event.target.value)}
+            value={filters.min}
+            onChange={(event) => updateFilter("min", event.target.value)}
             placeholder="Min"
             className="mt-2 w-full rounded-xl border border-white/10 bg-slate-950 px-4 py-2 text-sm text-white placeholder:text-slate-500"
           />
@@ -75,8 +104,8 @@ export default function ProductFilters({ labels }: Props) {
         <label className="text-sm text-slate-300">
           <span className="opacity-0">range</span>
           <input
-            value={max}
-            onChange={(event) => setMax(event.target.value)}
+            value={filters.max}
+            onChange={(event) => updateFilter("max", event.target.value)}
             placeholder="Max"
             className="mt-2 w-full rounded-xl border border-white/10 bg-slate-950 px-4 py-2 text-sm text-white placeholder:text-slate-500"
           />
@@ -85,8 +114,8 @@ export default function ProductFilters({ labels }: Props) {
       <label className="text-sm text-slate-300">
         {labels.sortBy}
         <select
-          value={sort}
-          onChange={(event) => setSort(event.target.value)}
+          value={filters.sort}
+          onChange={(event) => updateFilter("sort", event.target.value)}
           className="mt-2 w-full rounded-xl border border-white/10 bg-slate-950 px-4 py-2 text-sm text-white"
         >
           <option value="">{labels.sortNewest}</option>
