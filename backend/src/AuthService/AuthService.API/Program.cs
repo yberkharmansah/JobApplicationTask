@@ -22,6 +22,15 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+// CORS
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("Frontend", policy =>
+        policy.WithOrigins("http://localhost:3000")
+            .AllowAnyHeader()
+            .AllowAnyMethod());
+});
+
 // DbContext
 builder.Services.AddDbContext<AuthDbContext>(opt =>
     opt.UseNpgsql(builder.Configuration.GetConnectionString("AuthDb")));
@@ -60,6 +69,7 @@ app.Lifetime.ApplicationStarted.Register(() =>
 
 app.UseSerilogRequestLogging();
 app.UseMiddleware<GlobalExceptionMiddleware>();
+app.UseCors("Frontend");
 
 if (app.Environment.IsDevelopment())
 {

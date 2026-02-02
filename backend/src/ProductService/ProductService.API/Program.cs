@@ -1,14 +1,13 @@
-using System.Text;
-using MediatR;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using ProductService.API.Middlewares;
 using ProductService.Application.Products;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using ProductService.Core.Interfaces;
 using ProductService.Infrastructure.Caching;
 using ProductService.Infrastructure.Persistence;
 using Serilog;
+using System.Text;
 using StackExchange.Redis;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -25,6 +24,15 @@ builder.Host.UseSerilog();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+// CORS
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("Frontend", policy =>
+        policy.WithOrigins("http://localhost:3000")
+            .AllowAnyHeader()
+            .AllowAnyMethod());
+});
 
 // DbContext
 builder.Services.AddDbContext<ProductDbContext>(opt =>
@@ -45,9 +53,9 @@ builder.Services.AddSingleton<IConnectionMultiplexer>(_ => ConnectionMultiplexer
 
 // JWT AuthN/AuthZ
 var jwtSection = builder.Configuration.GetSection("Jwt");
-var issuer = jwtSection["Issuer"]!;
-var audience = jwtSection["Audience"]!;
-var key = jwtSection["Key"]!;
+var issuer = jwtSection["Issuer"] ?? throw new InvalidOperationException("Jwt:Issuer is missing.");
+var audience = jwtSection["Audience"] ?? throw new InvalidOperationException("Jwt:Audience is missing.");
+var key = jwtSection["Key"] ?? throw new InvalidOperationException("Jwt:Key is missing.");
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(opt =>
@@ -80,6 +88,7 @@ app.Lifetime.ApplicationStarted.Register(() =>
 
 app.UseSerilogRequestLogging();
 app.UseMiddleware<GlobalExceptionMiddleware>();
+app.UseCors("Frontend");
 
 if (app.Environment.IsDevelopment())
 {

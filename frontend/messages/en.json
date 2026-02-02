@@ -1,0 +1,62 @@
+{
+  "nav": {
+    "home": "Home",
+    "products": "Products",
+    "cart": "Cart",
+    "login": "Login",
+    "register": "Register",
+    "signedInAs": "Signed in as",
+    "logout": "Logout"
+  },
+  "hero": {
+    "title": "Smart shopping for modern teams",
+    "subtitle": "Discover products curated for performance, quality, and comfort. Build your cart and checkout fast.",
+    "ctaPrimary": "Browse products",
+    "ctaSecondary": "Learn more"
+  },
+  "products": {
+    "title": "Featured products",
+    "filters": "Filters",
+    "category": "Category",
+    "priceRange": "Price range",
+    "sortBy": "Sort by",
+    "sortNewest": "Newest",
+    "sortPriceAsc": "Price ↑",
+    "sortPriceDesc": "Price ↓",
+    "apply": "Apply",
+    "reset": "Reset",
+    "empty": "No products found for the selected filters."
+  },
+  "product": {
+    "addToCart": "Add to cart",
+    "details": "Product details",
+    "categoryLabel": "Category",
+    "priceLabel": "Price",
+    "backToProducts": "Back to products"
+  },
+  "cart": {
+    "title": "Your cart",
+    "empty": "Your cart is empty.",
+    "summary": "Summary",
+    "subtotal": "Subtotal",
+    "items": "items",
+    "remove": "Remove",
+    "checkout": "Proceed to checkout"
+  },
+  "auth": {
+    "title": "Welcome back",
+    "subtitle": "Access your workspace and manage products securely.",
+    "registerTitle": "Create your account",
+    "email": "Email address",
+    "password": "Password",
+    "loginButton": "Login",
+    "registerButton": "Register",
+    "switchToRegister": "Don't have an account? Register",
+    "switchToLogin": "Already have an account? Login",
+    "success": "Success! Your session is ready."
+  },
+  "footer": {
+    "headline": "Ready to elevate your catalog?",
+    "cta": "Start selling today"
+  }
+}
