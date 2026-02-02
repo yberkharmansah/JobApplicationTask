@@ -10,14 +10,17 @@ public sealed class ProductCache : IProductCache
 {
     private static readonly DistributedCacheEntryOptions CacheOptions =
         new() { AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(5) };
+    private const string ListIndexKey = "products:list:index";
 
     private readonly IDistributedCache _cache;
     private readonly IConnectionMultiplexer _redis;
+    private readonly IDatabase _db;
 
     public ProductCache(IDistributedCache cache, IConnectionMultiplexer redis)
     {
         _cache = cache;
         _redis = redis;
+        _db = _redis.GetDatabase();
     }
 
     public async Task<Product?> GetByIdAsync(Guid id, CancellationToken ct)
@@ -41,7 +44,11 @@ public sealed class ProductCache : IProductCache
     public Task SetListAsync(string? category, decimal? min, decimal? max, string? sort, List<Product> products, CancellationToken ct)
     {
         var payload = JsonSerializer.Serialize(products);
-        return _cache.SetStringAsync(ListKey(category, min, max, sort), payload, CacheOptions, ct);
+        var key = ListKey(category, min, max, sort);
+        return Task.WhenAll(
+            _cache.SetStringAsync(key, payload, CacheOptions, ct),
+            _db.SetAddAsync(ListIndexKey, key)
+        );
     }
 
     public Task InvalidateProductAsync(Guid id, CancellationToken ct)
@@ -49,19 +56,15 @@ public sealed class ProductCache : IProductCache
 
     public async Task InvalidateListAsync(CancellationToken ct)
     {
-        foreach (var endpoint in _redis.GetEndPoints())
+        var keys = await _db.SetMembersAsync(ListIndexKey);
+        if (keys.Length == 0)
         {
-            var server = _redis.GetServer(endpoint);
-            if (!server.IsConnected)
-            {
-                continue;
-            }
-
-            foreach (var key in server.Keys(pattern: "products:list:*"))
-            {
-                await _cache.RemoveAsync(key.ToString(), ct);
-            }
+            return;
         }
+
+        var removeTasks = keys.Select(key => _cache.RemoveAsync(key.ToString(), ct));
+        await Task.WhenAll(removeTasks);
+        await _db.KeyDeleteAsync(ListIndexKey);
     }
 
     private static string ProductKey(Guid id) => $"products:byid:{id}";

@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useEffect, useState } from "react";
@@ -12,13 +11,19 @@ export default function UserMenu() {
   const dispatch = useAppDispatch();
   const router = useRouter();
   const email = useAppSelector((state) => state.auth.email);
+  const role = useAppSelector((state) => state.auth.role);
   const [hydrated, setHydrated] = useState(false);
 
   useEffect(() => {
     const storedEmail = localStorage.getItem("authEmail");
     const storedToken = localStorage.getItem("authToken");
+    const storedRole = localStorage.getItem("authRole");
     if (storedEmail && storedToken) {
-      dispatch(setAuth({ email: storedEmail, token: storedToken }));
+      const roleValue = storedRole ?? "User";
+      if (!storedRole) {
+        localStorage.setItem("authRole", roleValue);
+      }
+      dispatch(setAuth({ email: storedEmail, token: storedToken, role: roleValue }));
     }
     setHydrated(true);
   }, [dispatch]);
@@ -26,6 +31,7 @@ export default function UserMenu() {
   const logout = () => {
     localStorage.removeItem("authEmail");
     localStorage.removeItem("authToken");
+    localStorage.removeItem("authRole");
     dispatch(clearAuth());
     router.push("/");
   };
@@ -61,12 +67,14 @@ export default function UserMenu() {
         </span>
         <span className="font-semibold text-white">{email}</span>
       </div>
-      <Link
-        href="/admin/products"
-        className="rounded-full border border-white/20 px-3 py-1 text-xs font-semibold text-slate-200 transition hover:border-white hover:text-white"
-      >
-        {t("admin")}
-      </Link>
+      {role === "Admin" ? (
+        <Link
+          href="/admin/products"
+          className="rounded-full border border-white/20 px-3 py-1 text-xs font-semibold text-slate-200 transition hover:border-white hover:text-white"
+        >
+          {t("admin")}
+        </Link>
+      ) : null}
       <button
         onClick={logout}
         className="rounded-full border border-white/20 px-3 py-1 text-xs font-semibold text-slate-200 transition hover:border-white hover:text-white"

@@ -25,17 +25,17 @@ public sealed class ProductsController : ControllerBase
     public Task<ProductDto> Get(Guid id, CancellationToken ct)
         => _mediator.Send(new GetProductByIdQuery(id), ct);
 
-    [Authorize]
+    [Authorize(Roles = "Admin")]
     [HttpPost]
     public Task<ProductDto> Create([FromBody] CreateProductRequest req, CancellationToken ct)
         => _mediator.Send(new CreateProductCommand(req.Name, req.Description, req.Price, req.Category, req.ImageUrl), ct);
 
-    [Authorize]
+    [Authorize(Roles = "Admin")]
     [HttpPut("{id:guid}")]
     public Task<ProductDto> Update(Guid id, [FromBody] UpdateProductRequest req, CancellationToken ct)
         => _mediator.Send(new UpdateProductCommand(id, req.Name, req.Description, req.Price, req.Category, req.ImageUrl), ct);
 
-    [Authorize]
+    [Authorize(Roles = "Admin")]
     [HttpDelete("{id:guid}")]
     public Task Delete(Guid id, CancellationToken ct)
         => _mediator.Send(new DeleteProductCommand(id), ct);

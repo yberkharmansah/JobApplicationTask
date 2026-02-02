@@ -1,89 +1,143 @@
 # JobApplicationTask
 
-Full Stack Developer 2. aşama task için hazırlanmış Auth + Product backend servisleri ve çok dilli Next.js storefront uygulaması.
+Full Stack Developer 2. aşama task’i için hazırlanmış; JWT tabanlı Auth servisi, CQRS + Redis cache ile optimize Product servisi ve çok dilli (TR/EN) Next.js storefront uygulaması.
 
 ## İçerik
-- [Genel Mimari](#genel-mimari)
-- [Gereksinimler](#gereksinimler)
-- [Kurulum](#kurulum)
-  - [Docker](#docker)
-  - [Backend](#backend)
-  - [Frontend](#frontend)
-- [Çevresel Değişkenler](#çevresel-değişkenler)
-- [Paketler & Sürümler](#paketler--sürümler)
-- [Notlar](#notlar)
+- [Proje Özeti](#proje-özeti)
+- [Mimari & Teknolojiler](#mimari--teknolojiler)
+- [Ön Koşullar](#ön-koşullar)
+- [Kurulum ve Çalıştırma](#kurulum-ve-çalıştırma)
+  - [Docker (PostgreSQL + Redis)](#docker-postgresql--redis)
+  - [Backend Servisleri](#backend-servisleri)
+  - [Frontend (Next.js)](#frontend-nextjs)
+- [Ortam Değişkenleri](#ortam-değişkenleri)
+- [Admin Kullanıcı ile Test](#admin-kullanıcı-ile-test)
+- [Sık Kullanılan API Uçları](#sık-kullanılan-api-uçları)
+- [Notlar ve İpuçları](#notlar-ve-ipuçları)
 
-## Genel Mimari
-- **Auth Service**: kayıt, login ve JWT üretimi.
-- **Product Service**: CQRS + Redis cache ile ürün listeleme ve CRUD.
-- **Frontend**: Next.js App Router, next-intl çok dilli destek, RTK ile sepet yönetimi.
+## Proje Özeti
+Bu proje; Auth ve Product servislerinin birlikte çalıştığı, JWT ile kimlik doğrulama ve rol bazlı yetkilendirme destekleyen, Redis cache ile hızlı ürün listeleme sağlayan bir e‑ticaret demo uygulamasıdır. Frontend tarafı Next.js App Router ile SSR/ISR destekler, multi‑language (TR/EN) ve RTK state yönetimi içerir.
 
-## Gereksinimler
+## Mimari & Teknolojiler
+**Backend**
+- .NET 8 (AuthService + ProductService)
+- Onion Architecture (Core / Application / Infrastructure / API)
+- CQRS (MediatR)
+- PostgreSQL
+- Redis
+- JWT Authentication + Role Authorization
+- Serilog + Global Exception Middleware
+
+**Frontend**
+- Next.js 14 (App Router)
+- TypeScript
+- TailwindCSS
+- next-intl (TR/EN)
+- Redux Toolkit (RTK)
+
+## Ön Koşullar
 - **.NET 7+**
 - **Node.js 20+**
 - **PostgreSQL 16**
 - **Redis 7**
+- (Öneri) Docker Desktop veya Docker Engine
 
-## Kurulum
+## Kurulum ve Çalıştırma
 
-### Docker
-PostgreSQL ve Redis’i ayağa kaldırmak için:
+### Docker (PostgreSQL + Redis)
+PostgreSQL ve Redis’i hızlıca ayağa kaldırmak için:
 ```bash
 cd docker
 docker compose up -d
 ```
 
-### Backend
-Her servisi ayrı terminalde başlatın.
+### Backend Servisleri
+Her servisi ayrı terminalde çalıştırın.
 
+**Auth Service**
 ```bash
 cd backend/src/AuthService
 dotnet restore
 dotnet run --project AuthService.API
 ```
 
+**Product Service**
 ```bash
 cd backend/src/ProductService
 dotnet restore
 dotnet run --project ProductService.API
 ```
 
-> Varsayılan swagger adresleri:
-> - Auth: `http://localhost:5001/swagger`
-> - Product: `http://localhost:5002/swagger`
+Swagger adresleri:
+- Auth: `http://localhost:5001/swagger`
+- Product: `http://localhost:5002/swagger`
 
-### Frontend
+> Not: İlk kez çalıştırıyorsanız EF Core migration’ları uygulayın.  
+> Örnek:
+> ```bash
+> cd backend/src/AuthService
+> dotnet ef migrations add AddAuthRoleAndRefreshTokens \
+>   --project AuthService.Infrastructure \
+>   --startup-project AuthService.API
+> dotnet ef database update \
+>   --project AuthService.Infrastructure \
+>   --startup-project AuthService.API
+> ```
+
+### Frontend (Next.js)
 ```bash
 cd frontend
 npm install
 npm run dev
 ```
-
 Uygulama `http://localhost:3000` adresinde çalışır.
 
-## Çevresel Değişkenler
-`frontend/.env.local` örneği:
+## Ortam Değişkenleri
+Frontend için `frontend/.env.local` dosyası örneği:
 ```bash
 NEXT_PUBLIC_AUTH_API_URL=http://localhost:5001/api
 NEXT_PUBLIC_PRODUCT_API_URL=http://localhost:5002/api
 ```
 
-> Backend tarafında ise `appsettings.Development.json` içinde JWT ve connection string örnekleri bulunur.
+Backend tarafında JWT ve connection string örnekleri:
+- `backend/src/AuthService/AuthService.API/appsettings.Development.json`
+- `backend/src/ProductService/ProductService.API/appsettings.Development.json`
 
-## Paketler & Sürümler
-Frontend’de kullanılan ana paketler:
-```bash
-npm install next@16.1.5 react@19.2.3 react-dom@19.2.3
-npm install @reduxjs/toolkit@^2.5.1 react-redux@^9.1.2
-npm install next-intl@^3.22.0
-```
+## Admin Kullanıcı ile Test
+Ürün ekleme / güncelleme / silme işlemleri **Admin** rolü gerektirir.
 
-Tailwind + tooling zaten proje içerisinde yer alır:
-```bash
-npm install -D tailwindcss@^4 eslint@^9 typescript@^5
-```
+### Hazır Admin Test Bilgisi
+- **E‑posta:** `admin@demo.com`
+- **Şifre:** `admin1998`
 
-## Notlar
-- Auth token frontend’de `localStorage` içinde saklanır (demo amaçlı).
-- Next.js sayfaları ISR ile yeniden valide edilir (`revalidate: 60/120`).
-- Ürün görselleri `next/image` ile lazy-load edilir.
+> Auth servisi ilk çalıştığında bu kullanıcı **otomatik olarak seed edilir** (Admin rolüyle).
+> Giriş yaptıktan sonra **Admin paneline** ulaşabilirsiniz:
+> `http://localhost:3000/tr/admin/products`
+
+> Eğer admin rolü görünmüyorsa:
+> - `admin@demo.com` hesabı yeni sisteme geçmeden önce oluşturulmuş olabilir.
+> - Veritabanında role güncellemesi yapabilirsiniz:
+> ```sql
+> UPDATE "Users"
+> SET "Role" = 'Admin'
+> WHERE "Email" = 'admin@demo.com';
+> ```
+
+## Sık Kullanılan API Uçları
+**Auth**
+- `POST /api/auth/register`
+- `POST /api/auth/login`
+- `POST /api/auth/refresh`
+
+**Product**
+- `GET /api/products`
+- `GET /api/products/{id}`
+- `POST /api/products` (Admin only)
+- `PUT /api/products/{id}` (Admin only)
+- `DELETE /api/products/{id}` (Admin only)
+
+## Notlar ve İpuçları
+- Auth token frontend’de demo amaçlı `localStorage` içinde saklanır.
+- Ürün listeleme SSR/ISR destekler (`revalidate` değerleri).
+- Ürün görselleri `next/image` ile lazy‑load edilir.
+- Redis cache ürün listeleme performansını artırır ve invalidation stratejisi içerir.

@@ -23,8 +23,15 @@ public sealed class AuthDbContext : DbContext
 
             b.HasIndex(x => x.Email).IsUnique();
 
+            b.Property(x => x.Role)
+                .IsRequired()
+                .HasMaxLength(32);
+
             b.Property(x => x.PasswordHash).IsRequired();
             b.Property(x => x.PasswordSalt).IsRequired();
+            b.Property(x => x.RefreshToken)
+                .HasMaxLength(256);
+            b.Property(x => x.RefreshTokenExpiresUtc);
             b.Property(x => x.CreatedAtUtc).IsRequired();
         });
     }

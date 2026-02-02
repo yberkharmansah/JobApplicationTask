@@ -24,6 +24,7 @@ const emptyForm: FormState = {
 export default function ProductAdminClient() {
   const t = useTranslations("admin");
   const token = useAppSelector((state) => state.auth.token);
+  const role = useAppSelector((state) => state.auth.role);
   const [products, setProducts] = useState<Product[]>([]);
   const [form, setForm] = useState<FormState>(emptyForm);
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -37,11 +38,22 @@ export default function ProductAdminClient() {
   };
 
   useEffect(() => {
+    if (role !== "Admin") {
+      return;
+    }
     loadProducts().catch(() => {
       setStatus(t("loadError"));
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [role]);
+
+  if (role !== "Admin") {
+    return (
+      <div className="rounded-3xl border border-white/10 bg-white/5 p-8 text-sm text-slate-300">
+        {t("adminOnly")}
+      </div>
+    );
+  }
 
   const updateField = (key: keyof FormState, value: string) => {
     setForm((prev) => ({
@@ -240,7 +252,7 @@ export default function ProductAdminClient() {
                   </div>
                   <div className="flex items-center gap-2">
                     <button
-                      type="button"
+                     type="button"
                       onClick={() => handleEdit(product)}
                       className="rounded-full border border-white/20 px-3 py-1 text-xs font-semibold text-slate-200 transition hover:border-white hover:text-white"
                     >

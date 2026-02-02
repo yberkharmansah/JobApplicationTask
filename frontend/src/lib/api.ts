@@ -76,7 +76,7 @@ export async function login(payload: { email: string; password: string }) {
     throw new Error("Login failed");
   }
 
-  return response.json() as Promise<{ token: string; email: string }>;
+  return response.json() as Promise<{ token: string; email: string; role: string }>;
 }
 
 export async function register(payload: { email: string; password: string }) {
@@ -90,7 +90,7 @@ export async function register(payload: { email: string; password: string }) {
     throw new Error("Register failed");
   }
 
-  return response.json() as Promise<{ token: string; email: string }>;
+  return response.json() as Promise<{ token: string; email: string; role: string }>;
 }
 
 export async function createProduct(

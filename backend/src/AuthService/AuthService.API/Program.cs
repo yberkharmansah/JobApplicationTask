@@ -30,7 +30,6 @@ builder.Services.AddCors(options =>
             .AllowAnyHeader()
             .AllowAnyMethod());
 });
-
 // DbContext
 builder.Services.AddDbContext<AuthDbContext>(opt =>
     opt.UseNpgsql(builder.Configuration.GetConnectionString("AuthDb")));
@@ -56,6 +55,14 @@ builder.Services.AddScoped<Func<AuthService.Core.Entities.User, string>>(sp =>
     var jwt = sp.GetRequiredService<IJwtTokenService>();
     return user => jwt.CreateToken(user);
 });
+builder.Services.AddScoped<Func<string>>(_ => () =>
+    Convert.ToBase64String(System.Security.Cryptography.RandomNumberGenerator.GetBytes(64)));
+builder.Services.AddScoped<Func<string, bool>>(sp =>
+{
+    var config = sp.GetRequiredService<IConfiguration>();
+    var adminList = config.GetSection("Auth:AdminEmails").Get<string[]>() ?? Array.Empty<string>();
+    return email => adminList.Contains(email, StringComparer.OrdinalIgnoreCase);
+});
 
 var app = builder.Build();
 app.Lifetime.ApplicationStarted.Register(() =>
@@ -63,6 +70,25 @@ app.Lifetime.ApplicationStarted.Register(() =>
     var firstUrl = app.Urls.FirstOrDefault() ?? "http://localhost";
     app.Logger.LogInformation("✅ AuthService started. Swagger: {SwaggerUrl}", $"{firstUrl}/swagger");
 });
+
+using (var scope = app.Services.CreateScope())
+{
+    var users = scope.ServiceProvider.GetRequiredService<IUserRepository>();
+    var hashFunc = scope.ServiceProvider.GetRequiredService<Func<string, (byte[] hash, byte[] salt)>>();
+    var adminEmail = "admin@demo.com";
+    var existing = await users.GetByEmailAsync(adminEmail, CancellationToken.None);
+    if (existing is null)
+    {
+        var (hash, salt) = hashFunc("admin1998");
+        await users.AddAsync(new AuthService.Core.Entities.User
+        {
+            Email = adminEmail,
+            PasswordHash = hash,
+            PasswordSalt = salt,
+            Role = "Admin"
+        }, CancellationToken.None);
+    }
+}
 
 
 

@@ -23,7 +23,8 @@ public sealed class JwtTokenService : IJwtTokenService
         {
             new(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
             new(JwtRegisteredClaimNames.Email, user.Email),
-            new("uid", user.Id.ToString())
+            new("uid", user.Id.ToString()),
+            new(ClaimTypes.Role, user.Role)
         };
 
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_opt.Key));
