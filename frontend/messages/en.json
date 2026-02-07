@@ -1,0 +1,96 @@
+{
+  "nav": {
+    "home": "Home",
+    "products": "Products",
+    "cart": "Cart",
+    "login": "Login",
+    "register": "Register",
+    "signedInAs": "Signed in as",
+    "admin": "Manage products",
+    "logout": "Logout"
+  },
+  "hero": {
+    "title": "Smart shopping for modern teams",
+    "subtitle": "Discover products curated for performance, quality, and comfort. Build your cart and checkout fast.",
+    "ctaPrimary": "Browse products",
+    "ctaSecondary": "Learn more"
+  },
+  "products": {
+    "title": "Featured products",
+    "filters": "Filters",
+    "category": "Category",
+    "priceRange": "Price range",
+    "sortBy": "Sort by",
+    "sortNewest": "Newest",
+    "sortPriceAsc": "Price ↑",
+    "sortPriceDesc": "Price ↓",
+     "apply": "Apply",
+    "reset": "Reset",
+    "empty": "No products found for the selected filters."
+  },
+  "product": {
+    "addToCart": "Add to cart",
+    "details": "Product details",
+    "categoryLabel": "Category",
+    "priceLabel": "Price",
+    "backToProducts": "Back to products"
+  },
+  "cart": {
+    "title": "Your cart",
+    "empty": "Your cart is empty.",
+    "summary": "Summary",
+    "subtotal": "Subtotal",
+    "items": "items",
+    "remove": "Remove",
+    "checkout": "Proceed to checkout"
+  },
+  "auth": {
+    "title": "Welcome back",
+    "subtitle": "Access your workspace and manage products securely.",
+    "registerTitle": "Create your account",
+    "email": "Email address",
+    "emailHint": "Email must be 5-100 characters.",
+    "password": "Password",
+    "confirmPassword": "Confirm password",
+    "passwordHint": "5-25 characters, at least one letter and one number.",
+    "passwordMismatch": "Passwords do not match.",
+    "loginButton": "Login",
+    "registerButton": "Register",
+    "switchToRegister": "Don't have an account? Register",
+    "switchToLogin": "Already have an account? Login",
+    "success": "Success! Your session is ready."
+  },
+  "footer": {
+    "headline": "Ready to elevate your catalog?",
+    "cta": "Start selling today"
+  },
+  "admin": {
+    "title": "Product management",
+    "subtitle": "Create, update, and remove products using authenticated requests.",
+    "createTitle": "Add a new product",
+    "editTitle": "Edit product",
+    "name": "Product name",
+    "description": "Description",
+    "price": "Price",
+    "category": "Category",
+    "imageUrl": "Image URL",
+    "preview": "Preview",
+    "previewAlt": "Selected product image",
+    "createButton": "Create product",
+    "updateButton": "Update product",
+    "editButton": "Edit",
+    "deleteButton": "Delete",
+    "cancel": "Cancel",
+    "listTitle": "Existing products",
+    "empty": "No products available yet.",
+    "authRequired": "Please sign in to manage products.",
+    "adminOnly": "Only admin accounts can access this page.",
+    "imageUrlRequired": "Please provide an image URL before saving.",
+    "createSuccess": "Product created successfully.",
+    "updateSuccess": "Product updated successfully.",
+    "deleteSuccess": "Product deleted successfully.",
+    "saveError": "Unable to save the product.",
+    "deleteError": "Unable to delete the product.",
+    "loadError": "Unable to load products."
+  }
+}

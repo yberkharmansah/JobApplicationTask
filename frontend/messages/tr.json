@@ -1,0 +1,97 @@
+
+{
+  "nav": {
+    "home": "Ana Sayfa",
+    "products": "Ürünler",
+    "cart": "Sepet",
+    "login": "Giriş",
+    "register": "Kayıt Ol",
+    "signedInAs": "Giriş yapan",
+    "admin": "Ürün yönetimi",
+    "logout": "Çıkış yap"
+  },
+  "hero": {
+    "title": "Modern ekipler için akıllı alışveriş",
+    "subtitle": "Performans, kalite ve konfor için seçilmiş ürünleri keşfedin. Sepetinizi oluşturun ve hızlıca satın alın.",
+    "ctaPrimary": "Ürünleri keşfet",
+    "ctaSecondary": "Detayları gör"
+  },
+  "products": {
+    "title": "Öne çıkan ürünler",
+    "filters": "Filtreler",
+    "category": "Kategori",
+    "priceRange": "Fiyat aralığı",
+    "sortBy": "Sıralama",
+    "sortNewest": "En yeni",
+    "sortPriceAsc": "Fiyat ↑",
+    "sortPriceDesc": "Fiyat ↓",
+    "apply": "Uygula",
+    "reset": "Sıfırla",
+    "empty": "Seçilen filtrelerde ürün bulunamadı."
+  },
+  "product": {
+    "addToCart": "Sepete ekle",
+    "details": "Ürün detayları",
+    "categoryLabel": "Kategori",
+    "priceLabel": "Fiyat",
+    "backToProducts": "Ürünlere dön"
+  },
+   "cart": {
+    "title": "Sepetin",
+    "empty": "Sepetin boş.",
+    "summary": "Özet",
+    "subtotal": "Ara toplam",
+    "items": "ürün",
+    "remove": "Kaldır",
+    "checkout": "Ödemeye ilerle"
+  },
+  "auth": {
+    "title": "Tekrar hoş geldiniz",
+    "subtitle": "Güvenli şekilde giriş yaparak ürünleri yönetin.",
+    "registerTitle": "Hesabını oluştur",
+    "email": "E-posta adresi",
+    "emailHint": "E-posta 5-100 karakter arasında olmalı.",
+    "password": "Şifre",
+    "confirmPassword": "Şifreyi doğrula",
+    "passwordHint": "5-25 karakter; en az bir harf ve bir sayı içermeli.",
+    "passwordMismatch": "Şifreler eşleşmiyor.",
+    "loginButton": "Giriş yap",
+    "registerButton": "Kayıt ol",
+    "switchToRegister": "Hesabın yok mu? Kayıt ol",
+    "switchToLogin": "Zaten hesabın var mı? Giriş yap",
+    "success": "Başarılı! Oturum hazır."
+  },
+  "footer": {
+    "headline": "Kataloğunu büyütmeye hazır mısın?",
+    "cta": "Hemen satışa başla"
+  },
+  "admin": {
+    "title": "Ürün yönetimi",
+    "subtitle": "Kimlik doğrulaması ile ürün ekleyin, güncelleyin ve silin.",
+    "createTitle": "Yeni ürün ekle",
+    "editTitle": "Ürünü düzenle",
+    "name": "Ürün adı",
+    "description": "Açıklama",
+    "price": "Fiyat",
+    "category": "Kategori",
+    "imageUrl": "Görsel URL",
+    "preview": "Önizleme",
+    "previewAlt": "Seçilen ürün görseli",
+    "createButton": "Ürün oluştur",
+    "updateButton": "Ürünü güncelle",
+    "editButton": "Düzenle",
+    "deleteButton": "Sil",
+    "cancel": "Vazgeç",
+    "listTitle": "Mevcut ürünler",
+    "empty": "Henüz ürün bulunmuyor.",
+    "authRequired": "Ürün yönetmek için giriş yapmalısınız.",
+    "adminOnly": "Bu sayfaya yalnızca admin hesapları erişebilir.",
+    "imageUrlRequired": "Kaydetmeden önce görsel URL girmelisiniz.",
+    "createSuccess": "Ürün başarıyla oluşturuldu.",
+    "updateSuccess": "Ürün başarıyla güncellendi.",
+    "deleteSuccess": "Ürün başarıyla silindi.",
+    "saveError": "Ürün kaydedilemedi.",
+    "deleteError": "Ürün silinemedi.",
+    "loadError": "Ürünler yüklenemedi."
+  }
+}

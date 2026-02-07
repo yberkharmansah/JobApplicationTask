@@ -1,0 +1,24 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: jobtask_postgres
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin123
+      POSTGRES_DB: jobtask
+    ports:
+      - "5432:5432"
+    volumes:
+      - jobtask_pg:/var/lib/postgresql/data
+
+  redis:
+    image: redis:7
+    container_name: jobtask_redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - jobtask_redis:/data
+
+volumes:
+  jobtask_pg:
+  jobtask_redis:

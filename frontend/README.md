@@ -110,8 +110,7 @@ Backend tarafında JWT ve connection string örnekleri:
 - **E‑posta:** `admin@demo.com`
 - **Şifre:** `admin1998`
 
-> Auth servisi ilk çalıştığında bu kullanıcı **otomatik olarak seed edilir** (Admin rolüyle).
-> Giriş yaptıktan sonra **Admin paneline** ulaşabilirsiniz:
+> Bu kullanıcı ile giriş yaptıktan sonra **Admin paneline** ulaşabilirsiniz:
 > `http://localhost:3000/tr/admin/products`
 
 > Eğer admin rolü görünmüyorsa:
